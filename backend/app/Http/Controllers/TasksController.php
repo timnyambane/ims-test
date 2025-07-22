@@ -27,6 +27,7 @@ class TasksController extends Controller
                 'status' => 'in:pending,active,completed',
                 'importance' => 'in:low,mid,high',
                 'worker_id' => 'nullable|exists:workers,id',
+                'due_date' => 'nullable|date',
             ]);
 
             $task = Task::create($validated);
@@ -62,6 +63,7 @@ class TasksController extends Controller
                 'status' => 'sometimes|required|in:pending,active,completed',
                 'importance' => 'sometimes|required|in:low,mid,high',
                 'worker_id' => 'nullable|exists:workers,id',
+                'due_date' => 'nullable|date',
             ]);
 
             $task->update($validated);

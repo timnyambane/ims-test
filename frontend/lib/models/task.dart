@@ -6,6 +6,7 @@ class Task {
   final String? description;
   final String status;
   final String importance;
+  final DateTime? dueDate;
   final Worker? worker;
 
   Task({
@@ -14,6 +15,7 @@ class Task {
     this.description,
     required this.status,
     required this.importance,
+    this.dueDate,
     this.worker,
   });
 
@@ -25,6 +27,9 @@ class Task {
       status: json['status'],
       importance: json['importance'],
       worker: json['worker'] != null ? Worker.fromJson(json['worker']) : null,
+      dueDate: json['due_date'] != null
+          ? DateTime.parse(json['due_date'])
+          : null,
     );
   }
 
@@ -35,6 +40,7 @@ class Task {
       'status': status,
       'importance': importance,
       'worker_id': worker?.id,
+      'due_date': dueDate?.toIso8601String(),
     };
   }
 }

@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('title');
             $table->text('description')->nullable();
             $table->enum('status', ['pending', 'active', 'completed'])->default('pending');
+            $table->timestamp('due_date')->nullable();
             $table->enum('importance', ['low', 'mid', 'high'])->default('mid');
             $table->timestamps();
         });

@@ -13,6 +13,11 @@ class Task extends Model
         'status',
         'importance',
         'worker_id',
+        'due_date'
+    ];
+
+    protected $casts = [
+        'due_date' => 'datetime',
     ];
 
     public function worker(): BelongsTo

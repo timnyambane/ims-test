@@ -3,6 +3,7 @@ import 'package:frontend/controllers/tasks_form_controller.dart';
 import 'package:get/get.dart';
 import 'package:frontend/models/task.dart';
 import 'package:frontend/models/worker.dart' as app_worker;
+import 'package:intl/intl.dart';
 
 class TaskFormScreen extends StatelessWidget {
   final Task? task;
@@ -11,25 +12,17 @@ class TaskFormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // We explicitly put the controller here.
-    // Get.put ensures that if it's already there (e.g., if you navigate back),
-    // it won't create a new one, but for this screen, it's typically new.
     final TaskFormController controller = Get.put(
       TaskFormController(taskToEdit: task),
     );
 
-    // Determine the title based on whether a task is being edited.
-    // This value is determined once when the screen is built.
     final String appBarTitle = controller.taskToEdit == null
         ? 'Add Task'
         : 'Edit Task';
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(appBarTitle), // Directly use the determined title
-      ),
+      appBar: AppBar(title: Text(appBarTitle)),
       body: Obx(() {
-        // Keep Obx for the body as it observes Rx variables
         if (controller.isLoading.value && controller.availableWorkers.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
@@ -69,6 +62,31 @@ class TaskFormScreen extends StatelessWidget {
                     decoration: const InputDecoration(labelText: 'Importance'),
                   ),
                 ),
+                // New: Due Date Picker
+                GestureDetector(
+                  onTap: () => controller.pickDate(context),
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: TextEditingController(
+                        text: controller.selectedDate.value == null
+                            ? ''
+                            : DateFormat(
+                                'dd/MM/yyyy',
+                              ).format(controller.selectedDate.value!),
+                      ),
+                      decoration: InputDecoration(
+                        labelText: 'Due Date',
+                        suffixIcon: controller.selectedDate.value != null
+                            ? IconButton(
+                                icon: const Icon(Icons.clear),
+                                onPressed: controller.clearDate,
+                              )
+                            : const Icon(Icons.calendar_today),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Obx(
                   () => DropdownButtonFormField<app_worker.Worker>(
                     value: controller.selectedWorker.value,
@@ -98,7 +116,7 @@ class TaskFormScreen extends StatelessWidget {
                         : Text(
                             appBarTitle == 'Add Task'
                                 ? 'Create Task'
-                                : 'Update Task', // Use appBarTitle here too
+                                : 'Update Task',
                           ),
                   ),
                 ),

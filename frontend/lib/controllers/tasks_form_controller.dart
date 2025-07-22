@@ -12,6 +12,7 @@ class TaskFormController extends GetxController {
   final RxString status = 'pending'.obs;
   final RxString importance = 'mid'.obs;
   final Rx<app_worker.Worker?> selectedWorker = Rx<app_worker.Worker?>(null);
+  final Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
 
   final TaskController _mainTaskController = Get.find<TaskController>();
 
@@ -36,6 +37,7 @@ class TaskFormController extends GetxController {
 
     status.value = taskToEdit?.status ?? 'pending';
     importance.value = taskToEdit?.importance ?? 'mid';
+    selectedDate.value = taskToEdit?.dueDate;
 
     fetchWorkersForDropdown().then((_) {
       if (taskToEdit?.worker != null) {
@@ -86,6 +88,24 @@ class TaskFormController extends GetxController {
     selectedWorker.value = worker;
   }
 
+  Future<void> pickDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate:
+          selectedDate.value ?? DateTime.now().add(const Duration(days: 1)),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDate.value) {
+      selectedDate.value = picked;
+    }
+  }
+
+  // Clear the selected date
+  void clearDate() {
+    selectedDate.value = null;
+  }
+
   String? validateTitle(String? value) {
     if (value == null || value.isEmpty) {
       return 'Title is required';
@@ -105,6 +125,7 @@ class TaskFormController extends GetxController {
           'status': status.value,
           'importance': importance.value,
           'worker_id': selectedWorker.value?.id,
+          'due_date': selectedDate.value?.toIso8601String(),
         };
 
         if (taskToEdit == null) {
@@ -114,6 +135,7 @@ class TaskFormController extends GetxController {
           status.value = 'pending';
           importance.value = 'mid';
           selectedWorker.value = null;
+          selectedDate.value = null;
 
           Get.back();
           Get.snackbar(
