@@ -22,4 +22,5 @@ A task management system built with **Flutter** for the frontend and **Laravel**
 
 # Setup
 
+The backend url is set to `http://127.0.0.1:8000/api` in the `lib/services/api_service.dart` file. You can change it to your backend URL once you run the server.
 The backend is on SQLite and `php 8.2.4`, so all you need to do is run `php artisan migrate --seed` for the 5 workers.

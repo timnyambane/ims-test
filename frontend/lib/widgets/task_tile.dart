@@ -23,7 +23,6 @@ class TaskTile extends StatelessWidget {
 
     if (task.dueDate != null) {
       final now = DateTime.now();
-      // Ensure we compare dates only, ignoring time for overdue/due soon logic
       final today = DateTime(now.year, now.month, now.day);
       final taskDueDate = DateTime(
         task.dueDate!.year,
@@ -33,9 +32,7 @@ class TaskTile extends StatelessWidget {
 
       if (taskDueDate.isBefore(today)) {
         isOverdue = true;
-      }
-      // Check if due today or tomorrow
-      else if (taskDueDate.isAtSameMomentAs(today) ||
+      } else if (taskDueDate.isAtSameMomentAs(today) ||
           taskDueDate.isAtSameMomentAs(today.add(const Duration(days: 1)))) {
         isDueSoon = true;
       }
@@ -43,31 +40,17 @@ class TaskTile extends StatelessWidget {
       dueDateText = DateFormat('MMM dd, yyyy').format(task.dueDate!);
     }
 
-    // Determine the level of highlight:
-    // 1. Critical: High importance + Overdue
-    // 2. Urgent: High importance + Due Soon
-    // 3. Important: Just High importance
-    // 4. Normal: Mid/Low importance
     final bool isCriticalHighlight = isHighImportance && isOverdue;
-    final bool isUrgentHighlight =
-        isHighImportance &&
-        isDueSoon &&
-        !isOverdue; // Not critical, but due soon
+    final bool isUrgentHighlight = isHighImportance && isDueSoon && !isOverdue;
     final bool isGeneralHighHighlight =
         isHighImportance && !isCriticalHighlight && !isUrgentHighlight;
 
-    // --- Define new color scheme for importance ---
-    final Color highImportanceColor =
-        Colors.orange.shade800; // Strong but not error red
-    final Color highImportanceAccent =
-        Colors.orange.shade100; // Light background for importance
-    final Color criticalColor =
-        Colors.red.shade700; // Keep some red for overdue high tasks
-    final Color criticalAccent =
-        Colors.red.shade50; // Light red for overdue background
-    final Color dueSoonColor =
-        Colors.blue.shade700; // Blue for tasks due very soon
-    final Color dueSoonAccent = Colors.blue.shade50; // Light blue background
+    final Color highImportanceColor = Colors.orange.shade800;
+    final Color highImportanceAccent = Colors.orange.shade100;
+    final Color criticalColor = Colors.red.shade700;
+    final Color criticalAccent = Colors.red.shade50;
+    final Color dueSoonColor = Colors.blue.shade700;
+    final Color dueSoonAccent = Colors.blue.shade50;
 
     Color cardColor;
     Color borderColor;
@@ -80,7 +63,7 @@ class TaskTile extends StatelessWidget {
     if (isCriticalHighlight) {
       cardColor = criticalAccent;
       borderColor = criticalColor;
-      leadingIcon = Icons.error_outline; // Changed from dangerous
+      leadingIcon = Icons.error_outline;
       iconColor = criticalColor;
       titleStyle = TextStyle(
         fontWeight: FontWeight.bold,
@@ -96,7 +79,7 @@ class TaskTile extends StatelessWidget {
     } else if (isUrgentHighlight) {
       cardColor = dueSoonAccent;
       borderColor = dueSoonColor;
-      leadingIcon = Icons.watch_later_outlined; // Clock icon for urgent
+      leadingIcon = Icons.watch_later_outlined;
       iconColor = dueSoonColor;
       titleStyle = TextStyle(
         fontWeight: FontWeight.bold,
@@ -112,7 +95,7 @@ class TaskTile extends StatelessWidget {
     } else if (isGeneralHighHighlight) {
       cardColor = highImportanceAccent;
       borderColor = highImportanceColor;
-      leadingIcon = Icons.star; // Star icon for general high importance
+      leadingIcon = Icons.star;
       iconColor = highImportanceColor;
       titleStyle = TextStyle(
         fontWeight: FontWeight.bold,
@@ -120,15 +103,11 @@ class TaskTile extends StatelessWidget {
         fontSize: 17,
       );
       subtitleStyle = TextStyle(color: highImportanceColor.withOpacity(0.8));
-      dueDateStyle = TextStyle(
-        fontSize: 12,
-        color: Colors.grey[600],
-      ); // Normal gray for due date
+      dueDateStyle = TextStyle(fontSize: 12, color: Colors.grey[600]);
     } else {
-      // Default styles for mid/low importance
       cardColor = Theme.of(context).cardColor; // Default card color
       borderColor = Colors.transparent;
-      leadingIcon = Icons.task; // Generic task icon or null
+      leadingIcon = Icons.task;
       iconColor = Colors.grey;
       titleStyle = Theme.of(context).textTheme.titleMedium!;
       subtitleStyle = Theme.of(context).textTheme.bodySmall!;
